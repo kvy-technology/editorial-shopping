@@ -12,6 +12,12 @@ export async function GET() {
     const payload = await getPayload({ config })
 
     // ── wipe ────────────────────────────────────────────────────────────────
+    // Clear homepage global first (references products/articles/media)
+    await payload.updateGlobal({
+      slug: 'homepage',
+      data: { hero: { heading: '', subheading: '' }, featuredArticles: [], shoppableScene: { hotspots: [] }, trendingProducts: [] },
+    }).catch(() => {})
+
     for (const col of ['articles', 'products', 'authors', 'categories', 'media'] as const) {
       const existing = await payload.find({ collection: col, limit: 300, depth: 0 })
       for (const doc of existing.docs) {
@@ -20,16 +26,24 @@ export async function GET() {
     }
 
     // ── upload helper ────────────────────────────────────────────────────────
-    async function uploadMedia(url: string, alt: string, filename: string) {
-      const res = await fetch(url)
-      if (!res.ok) throw new Error(`Failed to fetch ${url}`)
-      const ab = await res.arrayBuffer()
-      const data = Buffer.from(ab)
-      return payload.create({
-        collection: 'media',
-        data: { alt },
-        file: { data, mimetype: 'image/jpeg', name: filename, size: data.length },
-      })
+    async function uploadMedia(url: string, alt: string, filename: string, retries = 2): Promise<any> {
+      for (let attempt = 0; attempt <= retries; attempt++) {
+        try {
+          const res = await fetch(url)
+          if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`)
+          const ab = await res.arrayBuffer()
+          const data = Buffer.from(ab)
+          const result = await payload.create({
+            collection: 'media',
+            data: { alt },
+            file: { data, mimetype: 'image/jpeg', name: filename, size: data.length },
+          })
+          return result
+        } catch (err) {
+          if (attempt === retries) throw err
+          await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)))
+        }
+      }
     }
 
     // ── media ────────────────────────────────────────────────────────────────
