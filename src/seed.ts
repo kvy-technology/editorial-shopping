@@ -70,7 +70,7 @@ async function seed() {
     roomDetail2: 'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&q=80',
   }
 
-  const media: Record<string, { id: string; url?: string | null }> = {}
+  const media: Record<string, { id: string | number; url?: string | null }> = {}
   for (const [key, url] of Object.entries(IMAGES)) {
     try {
       media[key] = await uploadMedia(payload, {

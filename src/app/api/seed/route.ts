@@ -56,7 +56,7 @@ export async function GET() {
       roomDetail2:  'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=800&q=80',
     }
 
-    const media: Record<string, { id: string }> = {}
+    const media: Record<string, { id: string | number }> = {}
     for (const [key, url] of Object.entries(IMAGES)) {
       try {
         media[key] = await uploadMedia(url, key.replace(/([A-Z])/g, ' $1').toLowerCase().trim(), `${key}.jpg`)
