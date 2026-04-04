@@ -49,8 +49,6 @@ export default buildConfig({
   db: process.env.POSTGRES_URL
     ? vercelPostgresAdapter({
         pool: { connectionString: process.env.POSTGRES_URL },
-        push: false,
-        migrationDir: path.resolve(dirname, 'migrations'),
       })
     : sqliteAdapter({
         client: { url: process.env.DATABASE_URI || '' },
