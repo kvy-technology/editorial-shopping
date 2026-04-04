@@ -25,6 +25,8 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { HotspotEditor as HotspotEditor_4e3c6cb398523279ad5c573fe139adaf } from '../../../components/admin/HotspotEditor'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
+import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_vercel } from '@payloadcms/storage-vercel-blob/client'
+
 export const importMap = {
   "/components/admin/TagRowLabel#TagRowLabel": TagRowLabel_76c1283b75ccca00a7e3c405649bc292,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
@@ -51,5 +53,6 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "/components/admin/HotspotEditor#HotspotEditor": HotspotEditor_4e3c6cb398523279ad5c573fe139adaf,
-  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
+  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
+  "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_vercel
 }

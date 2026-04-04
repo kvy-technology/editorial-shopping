@@ -35,14 +35,11 @@ export default buildConfig({
   collections: [Users, Media, Categories, Authors, Products, Articles],
   globals: [Homepage],
   plugins: [
-    ...(process.env.BLOB_READ_WRITE_TOKEN
-      ? [
-          vercelBlobStorage({
-            collections: { media: true },
-            token: process.env.BLOB_READ_WRITE_TOKEN,
-          }),
-        ]
-      : []),
+    vercelBlobStorage({
+      collections: { media: true },
+      token: process.env.BLOB_READ_WRITE_TOKEN || '',
+      enabled: !!process.env.BLOB_READ_WRITE_TOKEN,
+    }),
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
