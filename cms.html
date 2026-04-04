@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CMS Editor — Habitat Magazine</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--serif:'Playfair Display',Georgia,serif;--sans:'Outfit',system-ui,sans-serif;--bg:#F8F7F4;--bg2:#FFFFFF;--bg3:#F0EFEB;--bg-dark:#111110;--bg-warm:#F5F0E8;--text:#181814;--text2:#6B6960;--text3:#A09E95;--inv:#F8F7F4;--bdr:#E0DED8;--bdr-lt:#ECEAE5;--terracotta:#C4673A;--terra-lt:#E8A47A;--terra-bg:#FDF3ED;--sage:#5B7A5E;--sage-bg:#EDF3ED;--sand:#B89F78;--sand-bg:#F7F2EB;--blue:#3B6FA0;--blue-bg:#EDF3FA;--amber:#B8860B;--amber-bg:#FDF8ED;--r:14px;--r-lg:22px;--r-xl:32px;--sh-s:0 2px 8px rgba(0,0,0,.04);--sh-m:0 8px 30px rgba(0,0,0,.07);--sh-l:0 20px 60px rgba(0,0,0,.1)}
+html{scroll-behavior:smooth;overflow-x:hidden}body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}a{text-decoration:none;color:inherit}button{cursor:pointer;font-family:var(--sans);border:none;background:none}img{display:block;max-width:100%}
+body::after{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.rv{opacity:0;transform:translateY(36px);transition:opacity .8s cubic-bezier(.23,1,.32,1),transform .8s cubic-bezier(.23,1,.32,1)}.rv.vis{opacity:1;transform:translateY(0)}.rv-d1{transition-delay:.1s}.rv-d2{transition-delay:.2s}.rv-d3{transition-delay:.3s}.rv-d4{transition-delay:.4s}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 48px;height:60px;display:flex;align-items:center;justify-content:space-between;background:rgba(248,247,244,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr-lt);transition:box-shadow .3s}.nav.shadow{box-shadow:0 2px 16px rgba(0,0,0,.04)}.nav-logo{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.03em;color:var(--terracotta)}.nav-links{display:flex;gap:28px}.nav-links a{font-size:13px;color:var(--text2);letter-spacing:.02em;position:relative;transition:color .3s;padding:4px 0}.nav-links a::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1.5px;background:var(--terracotta);transition:width .3s}.nav-links a:hover{color:var(--text)}.nav-links a:hover::after{width:100%}.nav-links a.on{color:var(--text);font-weight:500}.nav-links a.on::after{width:100%}.nav-r{display:flex;align-items:center;gap:16px}.nav-cart{position:relative;font-size:15px;width:38px;height:38px;border-radius:50%;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;transition:all .3s}.nav-cart:hover{background:var(--terracotta);color:#fff;border-color:var(--terracotta)}.cart-n{position:absolute;top:-4px;right:-4px;width:17px;height:17px;border-radius:50%;background:var(--terracotta);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700}
+
+/* CMS layout */
+.cms{background:var(--bg3);min-height:calc(100vh - 60px)}
+.cms-top{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:var(--bg2);border-bottom:1px solid var(--bdr-lt);position:sticky;top:60px;z-index:98}
+.cms-logo{display:flex;align-items:center;gap:10px}.cms-icon{width:30px;height:30px;background:var(--text);border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--inv);font-size:13px;font-weight:700}.cms-name{font-size:14px;font-weight:500}.cms-path{font-size:12px;color:var(--text3);margin-left:4px}
+.cms-btns{display:flex;gap:8px}
+.cms-btn{padding:8px 18px;border-radius:7px;font-size:12px;cursor:pointer;transition:all .3s}
+.cms-btn-pv{border:1px solid var(--bdr);color:var(--text2);background:none}.cms-btn-pv:hover{border-color:var(--text);color:var(--text)}
+.cms-btn-pub{background:var(--blue);color:#fff;border:none;font-weight:500}.cms-btn-pub:hover{background:#2a5f90}
+
+/* Two-column CMS layout */
+.cms-layout{display:grid;grid-template-columns:1fr 320px;max-width:1100px;margin:0 auto;padding:32px 28px;gap:24px;align-items:start}
+.cms-main{min-width:0}
+.cms-sidebar{position:sticky;top:108px}
+
+/* Fields */
+.cms-fld{margin-bottom:16px}.cms-lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;display:block}.cms-inp{width:100%;padding:11px 15px;border:1px solid var(--bdr);border-radius:9px;font-size:14px;font-family:var(--sans);color:var(--text);background:var(--bg2);outline:none;transition:border-color .3s}.cms-inp:focus{border-color:var(--terracotta)}.cms-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.cms-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+/* Blocks */
+.cms-blocks{margin-top:24px}.blk-section-lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.blk-count{font-size:10px;color:var(--text3);font-weight:400;letter-spacing:0}
+.blk{background:var(--bg2);border:1px solid var(--bdr-lt);border-radius:var(--r);padding:16px;margin-bottom:10px;transition:all .3s;cursor:grab}.blk:hover{box-shadow:var(--sh-s);transform:translateY(-1px)}
+.blk.blk-product{border-left:4px solid var(--blue)}.blk.blk-scene{border-left:4px solid var(--terracotta)}.blk.blk-tip{border-left:4px solid var(--sage)}.blk.blk-material{border-left:4px solid var(--sand)}.blk.blk-quote{border-left:4px solid var(--amber)}.blk.blk-img{border-left:4px solid var(--text3)}.blk.blk-budget{border-left:4px solid var(--terracotta)}.blk.blk-gtl{border-left:4px solid var(--blue)}.blk.blk-newsletter{border-left:4px solid var(--sage)}
+.blk-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.blk-hd-left{display:flex;align-items:center;gap:6px}
+.blk-tag{font-size:10px;padding:3px 10px;border-radius:5px;font-weight:500;letter-spacing:.03em}
+.bt-text{background:var(--bg3);color:var(--text2)}.bt-product{background:var(--blue-bg);color:var(--blue)}.bt-scene{background:var(--terra-bg);color:var(--terracotta)}.bt-tip{background:var(--sage-bg);color:var(--sage)}.bt-material{background:var(--sand-bg);color:#8A7A5A}.bt-quote{background:var(--amber-bg);color:var(--amber)}.bt-img{background:var(--bg3);color:var(--text3)}.bt-budget{background:var(--terra-bg);color:var(--terracotta)}.bt-gtl{background:var(--blue-bg);color:var(--blue)}.bt-newsletter{background:var(--sage-bg);color:var(--sage)}
+.blk-n{font-size:10px;color:var(--text3)}.blk-drag{font-size:14px;color:var(--text3);cursor:grab;padding:3px;display:flex;align-items:center;gap:6px}
+.blk-collapse{font-size:10px;color:var(--text3);cursor:pointer;padding:2px 8px;border-radius:4px;border:1px solid var(--bdr-lt);transition:all .2s}.blk-collapse:hover{border-color:var(--bdr);color:var(--text2)}
+.blk-preview{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* Product row */
+.blk-prow{display:flex;gap:12px;align-items:center}.blk-pthumb{width:48px;height:48px;border-radius:7px;overflow:hidden;flex-shrink:0}.blk-pthumb img{width:100%;height:100%;object-fit:cover}.blk-pinfo{flex:1}.blk-pname{font-size:13px;font-weight:500}.blk-pmeta{font-size:11px;color:var(--text3)}.blk-sync{font-size:10px;padding:3px 10px;border-radius:5px;background:var(--sage-bg);color:var(--sage);font-weight:500}
+
+/* Scene preview */
+.blk-scene-preview{margin-top:10px;border-radius:8px;overflow:hidden;position:relative;height:140px}.blk-scene-preview img{width:100%;height:100%;object-fit:cover}
+.blk-scene-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding:12px}
+.blk-scene-pin{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.8);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--terracotta);box-shadow:0 1px 6px rgba(0,0,0,.2)}
+.blk-scene-badge{font-size:10px;padding:4px 12px;border-radius:12px;background:rgba(0,0,0,.5);color:#fff;backdrop-filter:blur(4px)}
+
+/* Block options */
+.blk-opts{margin-top:12px;padding-top:12px;border-top:1px solid var(--bdr-lt)}
+.cms-note{width:100%;padding:9px 12px;border:1px solid var(--bdr-lt);border-radius:7px;font-size:12px;font-style:italic;color:var(--text2);font-family:var(--sans);background:var(--bg3);outline:none;margin-top:5px}
+.cms-pills{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.cms-pill{padding:5px 12px;border-radius:5px;font-size:11px;border:1px solid var(--bdr);color:var(--text2);cursor:pointer;background:none;transition:all .2s}
+.cms-pill.on{background:var(--text);color:var(--inv);border-color:var(--text)}
+
+/* Image pair preview */
+.blk-img-pair{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;border-radius:6px;overflow:hidden}
+.blk-img-pair-item{height:60px;overflow:hidden;border-radius:4px}.blk-img-pair-item img{width:100%;height:100%;object-fit:cover}
+
+/* Budget preview */
+.blk-budget-rows{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.blk-budget-row{display:flex;align-items:center;gap:8px;font-size:11px}
+.blk-budget-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.blk-budget-name{flex:1;color:var(--text2)}.blk-budget-val{font-weight:500}
+.blk-budget-total{display:flex;justify-content:space-between;font-size:12px;font-weight:600;padding-top:6px;border-top:1px solid var(--bdr-lt);margin-top:6px}
+
+/* GTL preview */
+.blk-gtl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:8px}
+.blk-gtl-item{border-radius:4px;overflow:hidden;height:48px}.blk-gtl-item img{width:100%;height:100%;object-fit:cover}
+
+/* Quote preview */
+.blk-quote-text{font-family:var(--serif);font-size:13px;font-style:italic;color:var(--text2);line-height:1.5;border-left:2px solid var(--amber);padding-left:12px;margin-top:6px}
+.blk-quote-cite{font-size:11px;color:var(--text3);margin-top:4px;padding-left:14px}
+
+/* Add block area */
+.cms-add{width:100%;padding:12px;border:2px dashed var(--bdr);border-radius:var(--r);color:var(--text3);font-size:13px;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .3s;margin-top:6px;background:none;cursor:pointer}.cms-add:hover{border-color:var(--terracotta);color:var(--terracotta)}
+.cms-types{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.cms-type{padding:6px 14px;border-radius:7px;font-size:11px;border:1px solid var(--bdr);color:var(--text2);background:none;cursor:pointer;transition:all .2s}.cms-type:hover{border-color:var(--text)}.cms-type.hl{border-color:var(--terracotta);background:var(--terra-bg);color:var(--terracotta)}.cms-type.hl2{border-color:var(--blue);background:var(--blue-bg);color:var(--blue)}.cms-type.hl3{border-color:var(--sage);background:var(--sage-bg);color:var(--sage)}
+
+/* Sidebar */
+.sidebar-card{background:var(--bg2);border:1px solid var(--bdr-lt);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.sidebar-h{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:12px;font-weight:500}
+.sidebar-stat{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bdr-lt);font-size:13px}
+.sidebar-stat:last-child{border:none}.sidebar-stat-label{color:var(--text2)}.sidebar-stat-val{font-weight:500}
+.sidebar-status{display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:12px}
+.sidebar-dot{width:8px;height:8px;border-radius:50%}
+.sidebar-dot-green{background:var(--sage)}.sidebar-dot-amber{background:var(--sand)}
+.sidebar-tag-list{display:flex;gap:5px;flex-wrap:wrap}.sidebar-tag{font-size:10px;padding:4px 10px;border-radius:12px;background:var(--bg3);color:var(--text2)}
+.sidebar-sep{height:1px;background:var(--bdr-lt);margin:14px 0}
+.sidebar-log{font-size:12px;color:var(--text3);display:flex;flex-direction:column;gap:6px}
+.sidebar-log-item{display:flex;gap:8px;align-items:flex-start}.sidebar-log-time{font-size:10px;color:var(--text3);min-width:40px;padding-top:1px}.sidebar-log-text{font-size:12px;color:var(--text2)}
+
+/* Footer */
+.footer{background:var(--bg-dark);color:var(--inv);padding:72px 64px 40px}.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:56px}.footer-brand{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--terra-lt);margin-bottom:10px}.footer-desc{font-size:14px;color:rgba(255,255,255,.3);line-height:1.7;max-width:280px}.footer-h{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:14px}.footer-links{display:flex;flex-direction:column;gap:9px}.footer-links a{font-size:14px;color:rgba(255,255,255,.45);transition:color .3s}.footer-links a:hover{color:var(--terra-lt)}.footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding-top:28px;display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.15)}
+
+@media(max-width:960px){.cms-layout{grid-template-columns:1fr;padding:20px 16px}.cms-sidebar{position:static}.cms-row{grid-template-columns:1fr}.cms-row3{grid-template-columns:1fr 1fr}.footer{padding:40px 24px}.footer-grid{grid-template-columns:1fr 1fr}}
+</style></head><body>
+
+<nav class="nav"><a href="index.html" class="nav-logo">Habitat</a><div class="nav-links"><a href="index.html">Home</a><a href="article.html">Article</a><a href="cms.html" class="on">CMS Editor</a><a href="search.html">Search</a></div><div class="nav-r"><button class="nav-cart">&#9825;<span class="cart-n">1</span></button></div></nav><div style="height:60px"></div>
+
+<section class="cms">
+  <div class="cms-top">
+    <div class="cms-logo"><div class="cms-icon">P</div><div class="cms-name">PayloadCMS</div><span class="cms-path">/ Room Stories / The Scandinavian Living Room / Edit</span></div>
+    <div class="cms-btns"><button class="cms-btn cms-btn-pv" onclick="window.open('article.html','_blank')">Preview</button><button class="cms-btn cms-btn-pub">Publish</button></div>
+  </div>
+
+  <div class="cms-layout">
+    <!-- ═══ MAIN COLUMN ═══ -->
+    <div class="cms-main">
+      <div class="cms-fld rv"><label class="cms-lbl">Title</label><input class="cms-inp" value="The Scandinavian living room: get the look" readonly></div>
+      <div class="cms-row">
+        <div class="cms-fld rv rv-d1"><label class="cms-lbl">Room type</label><div class="cms-inp" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer">Living room <span style="font-size:10px;color:var(--text3)">&#9660;</span></div></div>
+        <div class="cms-fld rv rv-d2"><label class="cms-lbl">Author</label><div class="cms-inp" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer">Sofia Nilsson <span style="font-size:10px;color:var(--text3)">&#9660;</span></div></div>
+      </div>
+      <div class="cms-row3">
+        <div class="cms-fld rv"><label class="cms-lbl">Hero image</label><div class="cms-inp" style="font-size:12px;color:var(--text3)">living-room-hero.jpg</div></div>
+        <div class="cms-fld rv rv-d1"><label class="cms-lbl">Read time</label><div class="cms-inp" style="font-size:12px">6 min</div></div>
+        <div class="cms-fld rv rv-d2"><label class="cms-lbl">Featured</label><div class="cms-inp" style="display:flex;align-items:center;gap:8px;font-size:12px"><div style="width:18px;height:18px;border-radius:4px;background:var(--terracotta);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px">&#10003;</div> Yes</div></div>
+      </div>
+
+      <!-- CONTENT BLOCKS -->
+      <div class="cms-blocks">
+        <div class="blk-section-lbl rv">Content blocks <span class="blk-count">12 blocks</span></div>
+
+        <!-- Block 1: Rich text (intro) -->
+        <div class="blk rv"><div class="blk-hd"><div class="blk-hd-left"><span class="blk-tag bt-text">Rich text</span><span class="blk-n">Block 1</span></div><div class="blk-drag"><span class="blk-collapse">&#9660;</span> &#8942;&#8942;</div></div><div class="blk-preview">The Scandinavian approach to living spaces has always been about one word: balance. Warmth without clutter. Minimalism without coldness...</div></div>
+
+        <!-- Block 2: Shoppable scene -->
+        <div class="blk blk-scene rv rv-d1">
+          <div class="blk-hd"><div class="blk-hd-left"><span class="blk-tag bt-scene">Shoppable scene</span><span class="blk-n">Block 2</span></div><div class="blk-drag"><span class="blk-collapse">&#9660;</span> &#8942;&#8942;</div></div>
+          <div class="blk-scene-preview">
+            <img src="https://images.unsplash.com/photo-1618220179428-22790b461013?w=780&h=280&fit=crop&q=80" alt="Scene">
+            <div class="blk-scene-overlay">
+              <div class="blk-scene-pin">1</div><div class="blk-scene-pin">2</div><div class="blk-scene-pin">3</div><div class="blk-scene-pin">4</div><div class="blk-scene-pin">5</div>
+            </div>
+          </div>
+          <div class="blk-opts">
+            <label class="cms-lbl">Pinned products (5)</label>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">
+              <div class="blk-prow"><div class="blk-pthumb"><img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=96&h=96&fit=crop&q=80" alt=""></div><div class="blk-pinfo"><div class="blk-pname">Oslo Curved Sofa</div><div class="blk-pmeta">Pin 1 &middot; x:20% y:52%</div></div><div class="blk-sync">&#10003;</div></div>
+              <div class="blk-prow"><div class="blk-pthumb"><img src="https://images.unsplash.com/photo-1532372576444-dda954194ad0?w=96&h=96&fit=crop&q=80" alt=""></div><div class="blk-pinfo"><div class="blk-pname">Nara Coffee Table</div><div class="blk-pmeta">Pin 2 &middot; x:42% y:72%</div></div><div class="blk-sync">&#10003;</div></div>
+              <div class="blk-prow"><div class="blk-pthumb"><img src="https://images.unsplash.com/photo-1507473885765-e6ed057ab13f?w=96&h=96&fit=crop&q=80" alt=""></div><div class="blk-pinfo"><div class="blk-pname">Arc Floor Lamp</div><div class="blk-pmeta">Pin 3 &middot; x:72% y:26%</div></div><div class="blk-sync">&#10003;</div></div>
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px;cursor:pointer">+ 2 more pinned products...</div>
+            <label class="cms-lbl" style="margin-top:12px">Hotspot style</label>
+            <div class="cms-pills"><button class="cms-pill on">Dot + popup</button><button class="cms-pill" onclick="this.parentNode.querySelector('.on').classList.remove('on');this.classList.add('on')">Numbers</button><button class="cms-pill" onclick="this.parentNode.querySelector('.on').classList.remove('on');this.classList.add('on')">Labels</button></div>
+            <label class="cms-lbl" style="margin-top:10px">Caption</label>
+            <input class="cms-note" value="Tap the + markers to shop each item — 5 products tagged" readonly>
+          </div>
+        </div>
+
+        <!-- Block 3: Section heading -->
+        <div class="blk rv"><div class="blk-hd"><div class="blk-hd-left"><span class="blk-tag bt-text">Section heading</span><span class="blk-n">Block 3</span></div><div class="blk-drag"><span class="blk-collapse">&#9660;</span> &#8942;&#8942;</div></div><div class="blk-preview" style="display:flex;gap:12px;align-items:baseline"><span style="font-size:10px;letter-spacing:2px;color:var(--terracotta)">01</span> <span style="font-family:var(--serif);font-size:16px;font-weight:500">The anchor piece</span></div></div>
+
+        <!-- Block 4: Rich text -->
+        <div class="blk rv rv-d1"><div class="blk-hd"><div class="blk-hd-left"><span class="blk-tag bt-text">Rich text</span><span class="blk-n">Block 4</span></div><div class="blk-drag"><span class="blk-collapse">&#9660;</span> &#8942;&#8942;</div></div><div class="blk-preview">Every great living room begins with a sofa that invites you to stay. The Oslo's gentle curve isn't just aesthetic...</div></div>
+
+        <!-- Block 5: Product card - Sofa -->
+        <div class="blk blk-product rv rv-d2">
+          <div class="blk-hd"><div class="blk-hd-left"><span class="blk-tag bt-product">Product card</span><span class="blk-n">Block 5</span></div><div class="blk-drag"><span class="blk-collapse">&#9660;</span> &#8942;&#8942;</div></div>
+          <div class="blk-prow"><div class="blk-pthumb"><img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=96&h=96&fit=crop&q=80" alt="Sofa"></div><div class="blk-pinfo"><div class="blk-pname">Oslo Curved Sofa</div><div class="blk-pmeta">SKU: FRN-001 &middot; $2,490 &middot; In stock</div></div><div class="blk-sync">&#10003; Synced</div></div>
+          <div class="blk-opts">
+            <label class="cms-lbl">Editor's note</label>
+            <input class="cms-note" value='"I always start a room with the sofa. Everything else responds to it."' readonly>
+            <label class="cms-lbl" style="margin-top:10px">Display style</label>
+            <div class="cms-pills"><button class="cms-pill on">Full card</button><button class="cms-pill" onclick="this.parentNode.querySelector('.on').classList.remove('on');this.classList.add('on')">Compact</button><button class="cms-pill" onclick="this.parentNode.querySelector('.on').classList.remove('on');this.classList.add('on')">Inline</button></div>
+          </div>
+        </div>
+
+        <!-- Block 6: Styling tip -->
+        <div class="blk blk-tip rv">
+          <div class="blk-hd"><div class="blk-hd-left"><span class="blk-tag bt-tip">Styling tip</span><span class="blk-n">Block 6</span></div><div class="blk-drag"><span class="blk-collapse">&#9660;</span> &#8942;&#8942;</div></div>
+          <div class="blk-preview"><strong style="color:var(--sage)">&#10024; Styling tip:</strong> A curved sofa works best when it's not pushed against the wall. Pull it forward by 30cm...</div>
+        </div>
+
+        <!-- Block 7: Section heading + Rich text + Product (collapsed preview) -->
+        <div class="blk rv rv-d1"><div class="blk-hd"><div class="blk-hd-left"><span class="blk-tag bt-text">Section heading</span><span class="blk-n">Block 7</span></div><div class="blk-drag"><span class="blk-collapse">&#9660;</span> &#8942;&#8942;</div></div><div class="blk-preview" style="display:flex;gap:12px;align-items:baseline"><span style="font-size:10px;letter-spacing:2px;color:var(--terracotta)">02</span> <span style="font-family:var(--serif);font-size:16px;font-weight:500">The centrepiece</span></div></div>
+
+        <!-- Block 8: Product card - Table -->
+        <div class="blk blk-product rv rv-d2">
+          <div class="blk-hd"><div class="blk-hd-left"><span class="blk-tag bt-product">Product card</span><span class="blk-n">Block 8</span></div><div class="blk-drag"><span class="blk-collapse">&#9660;</span> &#8942;&#8942;</div></div>
+          <div class="blk-prow"><div class="blk-pthumb"><img src="https://images.unsplash.com/photo-1532372576444-dda954194ad0?w=96&h=96&fit=crop&q=80" alt="Table"></div><div class="blk-pinfo"><div class="blk-pname">Nara Coffee Table</div><div class="blk-pmeta">SKU: FRN-002 &middot; $890 &middot; In stock</div></div><div class="blk-sync">&#10003; Synced</div></div>
+        </div>
+
+        <!-- Block 9: Material callout -->
+        <div class="blk blk-material rv">
+          <div class="blk-hd"><div class="blk-hd-left"><span class="blk-tag bt-material">Material callout</span><span class="blk-n">Block 9</span></div><div class="blk-drag"><span class="blk-collapse">&#9660;</span> &#8942;&#8942;</div></div>
+          <div class="blk-preview"><strong>&#127795; Why walnut?</strong> &mdash; Walnut is one of the few hardwoods that darkens with age rather than yellowing. Sourced from managed forests in Oregon.</div>
+        </div>
+
+        <!-- Block 10: Pull quote -->
+        <div class="blk blk-quote rv rv-d1">
+          <div class="blk-hd"><div class="blk-hd-left"><span class="blk-tag bt-quote">Pull quote</span><span class="blk-n">Block 10</span></div><div class="blk-drag"><span class="blk-collapse">&#9660;</span> &#8942;&#8942;</div></div>
+          <div class="blk-quote-text">"The best rooms are lit like restaurants — low, warm, and from multiple sources. Never from above."</div>
+          <div class="blk-quote-cite">Sofia Nilsson, Interior Editor</div>
+        </div>
+
+        <!-- Block 11: Image pair -->
+        <div class="blk blk-img rv rv-d2">
+          <div class="blk-hd"><div class="blk-hd-left"><span class="blk-tag bt-img">Image pair</span><span class="blk-n">Block 11</span></div><div class="blk-drag"><span class="blk-collapse">&#9660;</span> &#8942;&#8942;</div></div>
+          <div class="blk-img-pair">
+            <div class="blk-img-pair-item"><img src="https://images.unsplash.com/photo-1507473885765-e6ed057ab13f?w=380&h=120&fit=crop&q=80" alt="Lamp"></div>
+            <div class="blk-img-pair-item"><img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=380&h=120&fit=crop&q=80" alt="Detail"></div>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px;font-style:italic">Caption: Brass arc develops patina. Natural materials layer texture.</div>
+        </div>
+
+        <!-- Block 12: Room budget -->
+        <div class="blk blk-budget rv">
+          <div class="blk-hd"><div class="blk-hd-left"><span class="blk-tag bt-budget">Room budget</span><span class="blk-n">Block 12</span></div><div class="blk-drag"><span class="blk-collapse">&#9660;</span> &#8942;&#8942;</div></div>
+          <div class="blk-budget-rows">
+            <div class="blk-budget-row"><div class="blk-budget-dot" style="background:var(--terracotta)"></div><div class="blk-budget-name">Oslo Curved Sofa</div><div class="blk-budget-val">$2,490</div></div>
+            <div class="blk-budget-row"><div class="blk-budget-dot" style="background:var(--sand)"></div><div class="blk-budget-name">Kibo Lounge Chair</div><div class="blk-budget-val">$1,120</div></div>
+            <div class="blk-budget-row"><div class="blk-budget-dot" style="background:var(--sage)"></div><div class="blk-budget-name">Nara Coffee Table</div><div class="blk-budget-val">$890</div></div>
+            <div class="blk-budget-row"><div class="blk-budget-dot" style="background:var(--blue)"></div><div class="blk-budget-name">Arc Floor Lamp</div><div class="blk-budget-val">$420</div></div>
+            <div class="blk-budget-row"><div class="blk-budget-dot" style="background:var(--text3)"></div><div class="blk-budget-name">Sahara Jute Rug</div><div class="blk-budget-val">$340</div></div>
+            <div class="blk-budget-total"><span>Total</span><span style="color:var(--terracotta)">$5,260</span></div>
+          </div>
+          <div class="blk-opts"><label class="cms-lbl">Display</label><div class="cms-pills"><button class="cms-pill on">List + bar</button><button class="cms-pill" onclick="this.parentNode.querySelector('.on').classList.remove('on');this.classList.add('on')">Pie chart</button><button class="cms-pill" onclick="this.parentNode.querySelector('.on').classList.remove('on');this.classList.add('on')">List only</button></div></div>
+        </div>
+
+        <!-- Block 13: Get the look grid -->
+        <div class="blk blk-gtl rv rv-d1">
+          <div class="blk-hd"><div class="blk-hd-left"><span class="blk-tag bt-gtl">Get the look</span><span class="blk-n">Block 13</span></div><div class="blk-drag"><span class="blk-collapse">&#9660;</span> &#8942;&#8942;</div></div>
+          <div class="blk-gtl-grid">
+            <div class="blk-gtl-item"><img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=120&h=96&fit=crop&q=80" alt=""></div>
+            <div class="blk-gtl-item"><img src="https://images.unsplash.com/photo-1532372576444-dda954194ad0?w=120&h=96&fit=crop&q=80" alt=""></div>
+            <div class="blk-gtl-item"><img src="https://images.unsplash.com/photo-1507473885765-e6ed057ab13f?w=120&h=96&fit=crop&q=80" alt=""></div>
+            <div class="blk-gtl-item"><img src="https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=120&h=96&fit=crop&q=80" alt=""></div>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px">4 products &middot; Auto-generated from pinned scene products</div>
+          <div class="blk-opts"><label class="cms-lbl">Columns</label><div class="cms-pills"><button class="cms-pill">2</button><button class="cms-pill">3</button><button class="cms-pill on">4</button></div></div>
+        </div>
+
+        <!-- Block 14: Newsletter -->
+        <div class="blk blk-newsletter rv rv-d2">
+          <div class="blk-hd"><div class="blk-hd-left"><span class="blk-tag bt-newsletter">Newsletter</span><span class="blk-n">Block 14</span></div><div class="blk-drag"><span class="blk-collapse">&#9660;</span> &#8942;&#8942;</div></div>
+          <div class="blk-preview">Heading: "Get rooms like this in your inbox" &middot; CTA: "Subscribe"</div>
+        </div>
+
+        <button class="cms-add rv">+ Add block</button>
+        <div class="cms-types rv">
+          <button class="cms-type">Rich text</button>
+          <button class="cms-type">Section heading</button>
+          <button class="cms-type hl">Shoppable scene</button>
+          <button class="cms-type hl2">Product card</button>
+          <button class="cms-type hl3">Styling tip</button>
+          <button class="cms-type">Material callout</button>
+          <button class="cms-type">Pull quote</button>
+          <button class="cms-type">Image pair</button>
+          <button class="cms-type hl">Room budget</button>
+          <button class="cms-type hl2">Get the look</button>
+          <button class="cms-type hl3">Newsletter</button>
+          <button class="cms-type">Video</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SIDEBAR ═══ -->
+    <div class="cms-sidebar">
+      <!-- Status -->
+      <div class="sidebar-card rv">
+        <div class="sidebar-h">Status</div>
+        <div class="sidebar-status"><div class="sidebar-dot sidebar-dot-green"></div> Published</div>
+        <div class="sidebar-stat"><div class="sidebar-stat-label">Slug</div><div class="sidebar-stat-val" style="font-size:11px;color:var(--blue)">/living-room/scandinavian</div></div>
+        <div class="sidebar-stat"><div class="sidebar-stat-label">Published</div><div class="sidebar-stat-val">Apr 2, 2026</div></div>
+        <div class="sidebar-stat"><div class="sidebar-stat-label">Last edited</div><div class="sidebar-stat-val">2 hours ago</div></div>
+      </div>
+
+      <!-- Article stats -->
+      <div class="sidebar-card rv rv-d1">
+        <div class="sidebar-h">Article stats</div>
+        <div class="sidebar-stat"><div class="sidebar-stat-label">Read time</div><div class="sidebar-stat-val">6 min</div></div>
+        <div class="sidebar-stat"><div class="sidebar-stat-label">Content blocks</div><div class="sidebar-stat-val">14</div></div>
+        <div class="sidebar-stat"><div class="sidebar-stat-label">Products linked</div><div class="sidebar-stat-val">5</div></div>
+        <div class="sidebar-stat"><div class="sidebar-stat-label">Hotspots</div><div class="sidebar-stat-val">5</div></div>
+        <div class="sidebar-stat"><div class="sidebar-stat-label">Room total</div><div class="sidebar-stat-val" style="color:var(--terracotta)">$5,260</div></div>
+      </div>
+
+      <!-- Tags -->
+      <div class="sidebar-card rv rv-d2">
+        <div class="sidebar-h">Tags</div>
+        <div class="sidebar-tag-list">
+          <div class="sidebar-tag">Living room</div>
+          <div class="sidebar-tag">Scandinavian</div>
+          <div class="sidebar-tag">Get the look</div>
+          <div class="sidebar-tag">Shoppable</div>
+          <div class="sidebar-tag">Bouclé</div>
+          <div class="sidebar-tag">Walnut</div>
+        </div>
+      </div>
+
+      <!-- Product sync -->
+      <div class="sidebar-card rv rv-d3">
+        <div class="sidebar-h">MedusaJS sync</div>
+        <div class="sidebar-status"><div class="sidebar-dot sidebar-dot-green"></div> All products synced</div>
+        <div class="sidebar-stat"><div class="sidebar-stat-label">Last sync</div><div class="sidebar-stat-val">12 min ago</div></div>
+        <div class="sidebar-stat"><div class="sidebar-stat-label">Catalog</div><div class="sidebar-stat-val">248 products</div></div>
+        <div class="sidebar-sep"></div>
+        <div style="font-size:11px;color:var(--sage);display:flex;align-items:center;gap:4px">&#10003; Algolia index up to date</div>
+      </div>
+
+      <!-- Activity log -->
+      <div class="sidebar-card rv rv-d4">
+        <div class="sidebar-h">Activity</div>
+        <div class="sidebar-log">
+          <div class="sidebar-log-item"><div class="sidebar-log-time">2h</div><div class="sidebar-log-text">Sofia edited Block 10 (pull quote)</div></div>
+          <div class="sidebar-log-item"><div class="sidebar-log-time">3h</div><div class="sidebar-log-text">Added Block 12 (room budget)</div></div>
+          <div class="sidebar-log-item"><div class="sidebar-log-time">5h</div><div class="sidebar-log-text">Pinned Arc Floor Lamp to scene</div></div>
+          <div class="sidebar-log-item"><div class="sidebar-log-time">1d</div><div class="sidebar-log-text">Sofia published article</div></div>
+          <div class="sidebar-log-item"><div class="sidebar-log-time">2d</div><div class="sidebar-log-text">Draft created by Sofia</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer"><div class="footer-grid"><div><div class="footer-brand">Habitat</div><p class="footer-desc">Curated furniture stories with shoppable room scenes. Powered by MedusaJS, PayloadCMS, Algolia &amp; Stripe.</p></div><div><div class="footer-h">Rooms</div><div class="footer-links"><a href="#">Living room</a><a href="#">Bedroom</a><a href="#">Dining</a><a href="#">Home office</a></div></div><div><div class="footer-h">Stories</div><div class="footer-links"><a href="#">Get the look</a><a href="#">Designer picks</a><a href="#">Trends</a><a href="#">Interviews</a></div></div><div><div class="footer-h">Company</div><div class="footer-links"><a href="#">About</a><a href="#">Contact</a><a href="#">Sustainability</a><a href="#">Press</a></div></div></div><div class="footer-bottom"><span>Habitat Magazine — Editorial Shopping POC</span><div style="display:flex;gap:16px"><span>MedusaJS</span><span>PayloadCMS</span><span>Algolia</span><span>Stripe</span></div></div></footer>
+
+<script>
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');obs.unobserve(e.target)}})},{threshold:.08,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+window.addEventListener('scroll',()=>{document.querySelector('.nav')?.classList.toggle('shadow',scrollY>10)});
+</script>
+</body></html>

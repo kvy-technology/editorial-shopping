@@ -1,0 +1,13 @@
+.env
+*.db
+*.db-shm
+*.db-wal
+node_modules/
+.next/
+.payload/
+public/media/
+.agents/
+.claude/
+skills-lock.json
+tsconfig.tsbuildinfo
+*.mp4
