@@ -11,3 +11,4 @@ public/media/
 skills-lock.json
 tsconfig.tsbuildinfo
 *.mp4
+.vercel
