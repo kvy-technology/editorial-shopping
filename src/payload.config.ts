@@ -37,8 +37,8 @@ export default buildConfig({
   plugins: [
     vercelBlobStorage({
       collections: { media: true },
-      token: process.env.BLOB_READ_WRITE_TOKEN || '',
-      enabled: !!process.env.BLOB_READ_WRITE_TOKEN,
+      token: process.env.BLOB_READ_WRITE_TOKEN || process.env.habitat_READ_WRITE_TOKEN || '',
+      enabled: !!(process.env.BLOB_READ_WRITE_TOKEN || process.env.habitat_READ_WRITE_TOKEN),
     }),
   ],
   editor: lexicalEditor(),
