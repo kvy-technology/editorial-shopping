@@ -72,6 +72,25 @@ export function HotspotEditor({ path }: { path: string }) {
   // ── Hotspot placement state ─────────────────────────────────────────────
   const [pending, setPending] = useState<{ x: number; y: number } | null>(null)
   const [tooltip, setTooltip] = useState<number | null>(null)
+  const [search, setSearch] = useState('')
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  // Filter products by search term
+  const filteredProducts = useMemo(() => {
+    if (!search.trim()) return products
+    const q = search.toLowerCase()
+    return products.filter(
+      (p) => p.name.toLowerCase().includes(q) || (p.price && String(p.price).includes(q)),
+    )
+  }, [products, search])
+
+  // Auto-focus search when picker opens
+  useEffect(() => {
+    if (pending && searchRef.current) {
+      setSearch('')
+      setTimeout(() => searchRef.current?.focus(), 50)
+    }
+  }, [pending])
 
   const handleImageClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -305,11 +324,38 @@ export function HotspotEditor({ path }: { path: string }) {
               Cancel
             </button>
           </div>
+          {/* Search */}
+          <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--theme-elevation-150)', background: 'var(--theme-bg)' }}>
+            <input
+              ref={searchRef}
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search products by name..."
+              style={{
+                width: '100%',
+                padding: '6px 10px',
+                fontSize: 12,
+                border: '1px solid var(--theme-elevation-200)',
+                borderRadius: 6,
+                background: 'var(--theme-elevation-50)',
+                color: 'var(--theme-elevation-800)',
+                outline: 'none',
+              }}
+            />
+            {search && (
+              <div style={{ fontSize: 11, color: 'var(--theme-elevation-400)', marginTop: 4 }}>
+                {filteredProducts.length} result{filteredProducts.length !== 1 ? 's' : ''}
+              </div>
+            )}
+          </div>
           <div style={s.productGrid}>
             {products.length === 0 ? (
               <div style={{ padding: 16, color: 'var(--theme-elevation-400)', fontSize: 12 }}>Loading…</div>
+            ) : filteredProducts.length === 0 ? (
+              <div style={{ padding: 16, color: 'var(--theme-elevation-400)', fontSize: 12 }}>No products match "{search}"</div>
             ) : (
-              products.map((p) => (
+              filteredProducts.map((p) => (
                 <div
                   key={p.id}
                   style={s.productCard}
