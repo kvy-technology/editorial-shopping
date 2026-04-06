@@ -60,12 +60,12 @@ export default function ProductModal({ product, onClose }: Props) {
         </button>
 
         {/* Image */}
-        <div className="relative h-64 bg-habitat-warm overflow-hidden">
+        <div className="relative h-72 bg-white overflow-hidden">
           {product.image ? (
             <img
               src={product.image}
               alt={product.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain p-6"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-habitat-muted text-sm">

@@ -35,12 +35,12 @@ export default function TrendingRail({ products }: Props) {
               style={{ transitionDelay: `${i * 0.05}s` }}
             >
               {/* Image */}
-              <div className="h-52 overflow-hidden bg-habitat-dark relative">
+              <div className="h-52 overflow-hidden bg-white relative">
                 {imgUrl ? (
                   <img
                     src={imgUrl}
                     alt={p.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-habitat-dark to-habitat-dark-2" />

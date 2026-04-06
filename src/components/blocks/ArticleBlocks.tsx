@@ -108,7 +108,7 @@ function ProductCardBlock({ block }: { block: any }) {
     return (
       <div className="rv my-6 flex items-center gap-4 p-4 bg-habitat-offwhite rounded-xl border border-black/5">
         {imgUrl && (
-          <img src={imgUrl} alt={p.name} className="w-16 h-16 object-cover rounded-lg flex-shrink-0" />
+          <img src={imgUrl} alt={p.name} className="w-16 h-16 object-contain rounded-lg flex-shrink-0 bg-white" />
         )}
         <div className="flex-1 min-w-0">
           <p className="font-medium">{p.name}</p>
@@ -126,11 +126,11 @@ function ProductCardBlock({ block }: { block: any }) {
     <>
       <div className="rv my-10 grid md:grid-cols-[240px_1fr] gap-6 p-5 bg-habitat-warm rounded-2xl">
         {imgUrl && (
-          <button onClick={() => setModalOpen(true)} className="block overflow-hidden rounded-xl group">
+          <button onClick={() => setModalOpen(true)} className="block overflow-hidden rounded-xl group bg-white">
             <img
               src={imgUrl}
               alt={p.name}
-              className="w-full h-52 md:h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="w-full h-52 md:h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
             />
           </button>
         )}
